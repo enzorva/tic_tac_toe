@@ -31,73 +31,64 @@ def get_play(player):
 
 
 
-def check_win():
-    #linhas
-    if board[0] in [x, o] and all(i == board[0] for i in board[:3]):
-        print(f"Jogador {board[0]} ganhou")
-        return True
-    elif board[3] in [x, o] and all(i == board[3] for i in board[3:6]):
-        print(f"Jogador {board[0]} ganhou")
-        return True
-    elif board[6] in [x, o] and all(i == board[6] for i in board[6:9]):
-        print(f"Jogador {board[0]} ganhou")
-        return True
-    
-    #colunas para x
-    elif board[0] == x and board[3] == x and board[6] == x:
-        print("Jogador x ganhou")
-        return True
-    elif board[1] == x and board[4] == x and board[7] == x:
-        print("Jogador x ganhou")
-        return True
-    elif board[2] == x and board[5] == x and board[8] == x:
-        print("Jogador x ganhou")
-        return True
+def check_win_row(player):
+    global winner
+    for i in range(0, 9, 3):
+        if board[i] == board[i+1] == board[i+2] == player:
+            global winner
+            winner = player
+            return True 
+    return False  
 
-    #colunas para o
-    elif board[0] == o and board[3] == o and board[6] == o:
-        print("Jogador o ganhou")
-        return True
-    elif board[1] == o and board[4] == o and board[7] == o:
-        print("Jogador o ganhou")
-        return True
-    elif board[2] == o and board[5] == o and board[8] == o:
-        print("Jogador o ganhou")
-        return True
 
-    #diagonais para x
-    elif board[0] == x and board[4] == x and board[8] == x:
-        print("Jogador x ganhou")
+def check_win_column(player):
+
+    columns = [[0, 3, 6], [1, 4, 7], [2, 5, 8]]
+
+    for col in columns:
+        if board[col[0]] == board[col[1]] == board[col[2]] == player:
+            global winner
+            winner = player
+            return True 
+    return False    
+
+
+def check_win_diagonals(player):
+
+    diagonals = [[0, 4, 8], [2, 4, 6]]
+
+    for dialgonal in diagonals:
+        if board[dialgonal[0]] == board[dialgonal[1]] == board[dialgonal[2]] == player:
+            global winner
+            winner = player
+            return True
+    return False
+
+
+
+def check_win(player):
+    if check_win_row() or check_win_column(player) or check_win_diagonals(player):
+        print(f"Jogador {winner} ganhou")
         return True
-    elif board[2] == x and board[4] == x and board[6] == x:
-        print("Jogador x ganhou")
-        return True
-    
-    #diagonais para o
-    elif board[0] == o and board[4] == o and board[8] == o:
-        print("Jogador o ganhou")
-        return True
-    elif board[2] == o and board[4] == o and board[6] == o:
-        print("Jogador o ganhou")
-        return True
+    return False
+
 
 
 
 def game_loop():
     
     for j in range(9):
-        if check_win():
-            break
         player = x if j % 2 == 0 else o
+
         move = get_play(player)
         quadrant = int(move) - 1
+        
         if board[quadrant] == " ":
-            if player == x:
-                board[quadrant] = x
-                display_grid() 
-            else:
-                board[quadrant] = o
-                display_grid() 
+            board[quadrant] = player
+            display_grid()
+
+            if check_win(player):
+                break
         else:
             print("Quadrante Inválido")
 
