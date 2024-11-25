@@ -35,21 +35,13 @@ def get_play(player):
 
 def highlight_win(a, b, c):
     if b == a + 1:
-        board[a] = "-"
-        board[b] = "-"
-        board[c] = "-"
+        board[a], board[b], board[c] = "-", "-", "-"
     elif b == a + 3:
-        board[a] = "|"
-        board[b] = "|"
-        board[c] = "|"
+        board[a], board[b], board[c] = "|", "|", "|"
     elif a == 0 and c == 8:
-        board[a] = "\\"
-        board[b] = "\\"
-        board[c] = "\\"
+        board[a], board[b], board[c] = "\\", "\\", "\\"
     elif a == 2 and c == 6:
-        board[a] = "/"
-        board[b] = "/"
-        board[c] = "/"
+        board[a], board[b], board[c] = "/", "/", "/"
 
 
 
