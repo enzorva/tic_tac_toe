@@ -1,3 +1,5 @@
+import random
+
 board = [" "] * 9
 x = "x"
 o = "o"
@@ -19,10 +21,10 @@ def display_grid():
 
 
 
-def get_play(player):
+def get_play():
     while True:
         try:
-            play = input(f"Vez jogador {player}: ")
+            play = input(f"Vez jogador x: ")
             if play.isdigit() and 1 <= int(play) <= 9:
                 return play
             else:
@@ -98,34 +100,48 @@ def check_win(player):
     return False
 
 
-
-         
-
+def ai():
+    choice = random.randrange(9)
+    quadrant = int(choice) - 1
+    while board[quadrant] != " ":
+        choice = random.randrange(9)
+        quadrant = int(choice) - 1
+    board[quadrant] = o
+    display_grid()
+        
 
 def game_loop():
     
     for j in range(9):
-        player = x if j % 2 == 0 else o
+        if j % 2 == 0:
+            player = x
+            move = get_play()
+            quadrant = int(move) - 1
+            
+            if board[quadrant] == " ":
+                board[quadrant] = player
+                display_grid()
 
-        move = get_play(player)
-        quadrant = int(move) - 1
-        
-        if board[quadrant] == " ":
-            board[quadrant] = player
-            display_grid()
+                if check_win(player):
+                    display_grid()
+                    break
+                    
+                    
+            else:
+                print("Quadrante Inválido")
 
+            if j == 8:
+                print("Deu véia!!!")
+        else:
+            print("Vez jogador o...")
+            ai()
+            player = o
             if check_win(player):
                 display_grid()
                 break
-                
-                
-        else:
-            print("Quadrante Inválido")
 
-        if j == 8:
-            print("Deu véia!!!")
-
-
+            if j == 8:
+                print("Deu véia!!!")
 
 
 def main():
