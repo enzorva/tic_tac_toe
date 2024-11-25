@@ -4,6 +4,7 @@ o = "o"
 
 
 def display_grid():
+    #board = [str(cell) if cell !=1 else "!" for cell in display_board]
     print(f"""
         1    |2    |3
           {board[0]}  |  {board[1]}  |  {board[2]} 
@@ -31,13 +32,34 @@ def get_play(player):
 
 
 
+def highlight_win(a, b, c):
+    if b == a + 1:
+        board[a] = "-"
+        board[b] = "-"
+        board[c] = "-"
+    elif b == a + 3:
+        board[a] = "|"
+        board[b] = "|"
+        board[c] = "|"
+    elif a == 0 and c == 8:
+        board[a] = "\\"
+        board[b] = "\\"
+        board[c] = "\\"
+    elif a == 2 and c == 6:
+        board[a] = "/"
+        board[b] = "/"
+        board[c] = "/"
+
+
+
 def check_win_row(player):
-    global winner
     for i in range(0, 9, 3):
         if board[i] == board[i+1] == board[i+2] == player:
             global winner
             winner = player
-            return True 
+            highlight_win(i, i+1, i+2)
+            return True
+            
     return False  
 
 
@@ -49,7 +71,9 @@ def check_win_column(player):
         if board[col[0]] == board[col[1]] == board[col[2]] == player:
             global winner
             winner = player
+            highlight_win(col[0], col[1], col[2])
             return True 
+            
     return False    
 
 
@@ -61,18 +85,21 @@ def check_win_diagonals(player):
         if board[dialgonal[0]] == board[dialgonal[1]] == board[dialgonal[2]] == player:
             global winner
             winner = player
+            highlight_win(dialgonal[0], dialgonal[1], dialgonal[2])
             return True
     return False
 
 
 
 def check_win(player):
-    if check_win_row() or check_win_column(player) or check_win_diagonals(player):
-        print(f"Jogador {winner} ganhou")
+    if check_win_row(player) or check_win_column(player) or check_win_diagonals(player):
+        print(f"Jogador {winner} ganhou!!!")
         return True
     return False
 
 
+
+         
 
 
 def game_loop():
@@ -88,9 +115,16 @@ def game_loop():
             display_grid()
 
             if check_win(player):
+                display_grid()
                 break
+                
+                
         else:
             print("Quadrante Inválido")
+
+        if j == 8:
+            print("Deu véia!!!")
+
 
 
 
