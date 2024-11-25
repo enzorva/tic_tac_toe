@@ -100,7 +100,7 @@ def check_win(player):
     return False
 
 
-def ai():
+def bot():
     choice = random.randrange(9)
     quadrant = int(choice) - 1
     while board[quadrant] != " ":
@@ -134,7 +134,7 @@ def game_loop():
                 print("Deu véia!!!")
         else:
             print("Vez jogador o...")
-            ai()
+            bot()
             player = o
             if check_win(player):
                 display_grid()
