@@ -1,4 +1,4 @@
-import random
+from bot import bot
 
 board = [" "] * 9
 x = "x"
@@ -6,7 +6,6 @@ o = "o"
 
 
 def display_grid():
-    #board = [str(cell) if cell !=1 else "!" for cell in display_board]
     print(f"""
         1    |2    |3
           {board[0]}  |  {board[1]}  |  {board[2]} 
@@ -99,15 +98,6 @@ def check_win(player):
         return True
     return False
 
-
-def bot():
-    choice = random.randrange(9)
-    quadrant = int(choice) - 1
-    while board[quadrant] != " ":
-        choice = random.randrange(9)
-        quadrant = int(choice) - 1
-    board[quadrant] = o
-    display_grid()
         
 
 def game_loop():
@@ -134,7 +124,7 @@ def game_loop():
                 print("Deu véia!!!")
         else:
             print("Vez jogador o...")
-            bot()
+            bot(display_grid, board, j)
             player = o
             if check_win(player):
                 display_grid()
