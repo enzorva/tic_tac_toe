@@ -20,16 +20,16 @@ def display_grid():
 
 
 
-def get_play():
-    while True:
-        try:
-            play = input(f"Vez jogador x: ")
-            if play.isdigit() and 1 <= int(play) <= 9:
-                return play
-            else:
-                raise ValueError("Digite um número válido entre 1 e 9")
-        except ValueError as e:
-            print(e)
+def get_play(player):
+        while True:
+            try:
+                play = input(f"Vez jogador {player}: ")
+                if play.isdigit() and 1 <= int(play) <= 9:
+                    return play
+                else:
+                    raise ValueError("Digite um número válido entre 1 e 9")
+            except ValueError as e:
+                print(e)
 
 
 
@@ -100,12 +100,40 @@ def check_win(player):
 
         
 
-def game_loop():
+def game_loop(game_mode):
+    
     
     for j in range(9):
-        if j % 2 == 0:
-            player = x
-            move = get_play()
+        if game_mode == "bot":
+            if j % 2 == 0:
+                player = x
+                move = get_play(player)
+                quadrant = int(move) - 1
+                
+                if board[quadrant] == " ":
+                    board[quadrant] = player
+                    display_grid()
+
+                    if check_win(player):
+                        display_grid()
+                        break        
+                else:
+                    print("Quadrante Inválido")
+                if j == 8:
+                    print("Deu véia!!!")
+            else:
+                print("Vez jogador o...")
+                bot(display_grid, board, j)
+                player = o
+                if check_win(player):
+                    display_grid()
+                    break
+                if j == 8:
+                    print("Deu véia!!!")
+
+        elif game_mode == "player2":
+            player = x if j % 2 == 0 else o
+            move = get_play(player)
             quadrant = int(move) - 1
             
             if board[quadrant] == " ":
@@ -123,19 +151,14 @@ def game_loop():
             if j == 8:
                 print("Deu véia!!!")
         else:
-            print("Vez jogador o...")
-            bot(display_grid, board, j)
-            player = o
-            if check_win(player):
-                display_grid()
-                break
-
-            if j == 8:
-                print("Deu véia!!!")
+            raise ValueError("Comando invalido, digite bot ou player2")
 
 
 def main():
+    game_mode = input("Escolha modo de jogo (bot ou player2): ")
+    while game_mode != "bot" and game_mode != "player2":
+        game_mode = input("Escolha modo de jogo (bot ou player2): ")
     display_grid()
-    game_loop()
+    game_loop(game_mode)
 
 main()
