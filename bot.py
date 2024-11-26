@@ -105,7 +105,7 @@ class Bot:
                     display_grid()
                     return
 
-            # Strategic Moves (fallback)
+            # Strategic Moves 
             if board[4] == " ":  # Center
                 board[4] = self.o
                 display_grid()
