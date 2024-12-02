@@ -82,7 +82,7 @@ class GameController:
             except ValueError as e:
                 print(e)
 
-    def game_loop(self, game_mode):
+    def game_loop(self, game_mode, difficulty):
         for j in range(9):
             if game_mode == "bot":
                 if j % 2 == 0:
@@ -101,7 +101,13 @@ class GameController:
                         print("Deu véia!!!")
                 else:
                     print("Vez jogador o...")
-                    self.adversary.bot(self.game.display_grid, self.game.board, j)
+                    match difficulty:
+                        case "1":
+                            self.adversary.easy_bot(self.game.display_grid, self.game.board)
+                        case "2":
+                            self.adversary.medium_bot(self.game.display_grid, self.game.board, j)
+                        case "3":
+                            self.adversary.hard_bot(self.game.display_grid, self.game.board)
                     player = self.game.o
                     if self.game.check_win(player):
                         self.game.display_grid()
