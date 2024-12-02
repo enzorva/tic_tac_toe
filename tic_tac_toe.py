@@ -128,10 +128,22 @@ class GameController:
 
 def main():
     controller = GameController()
+
     game_mode = input("Escolha modo de jogo (bot ou player2): ")
     while game_mode != "bot" and game_mode != "player2":
         game_mode = input("Escolha modo de jogo (bot ou player2): ")
+
+    if game_mode == "bot":
+        valid_difficulties = ["1", "2", "3", "4"]
+        difficulty = None
+        while difficulty not in valid_difficulties:
+            difficulty =  input("""Escolha a dificuldade:
+        1. Easy
+        2. Medium
+        3. Hard
+        4. Hardcore\n""")
+            
     controller.game.display_grid()
-    controller.game_loop(game_mode)
+    controller.game_loop(game_mode, difficulty)
 
 main()

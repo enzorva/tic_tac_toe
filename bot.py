@@ -122,3 +122,5 @@ class Bot:
                     board[edge] = self.o
                     display_grid()
                     return
+
+# class HardBot:
