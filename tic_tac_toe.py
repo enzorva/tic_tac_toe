@@ -1,4 +1,6 @@
 from bot import Bot
+import time
+import threading
 
 class TicTacToe:
     def __init__(self):
@@ -61,7 +63,7 @@ class TicTacToe:
 
     def check_win(self, player):
         if self.check_win_row(player) or self.check_win_column(player) or self.check_win_diagonals(player):
-            print(f"Jogador {player} ganhou!!!")
+            print(f"{player} wins!!!")
             return True
         return False
 
@@ -70,21 +72,33 @@ class GameController:
     def __init__(self):
         self.game = TicTacToe()
         self.adversary = Bot()
+        self.timer_active = True
 
     def get_play(self, player):
         while True:
             try:
-                play = input(f"Vez jogador {player}: ")
+                play = input(f"{player}'s turn: ")
                 if play.isdigit() and 1 <= int(play) <= 9:
                     return play
                 else:
-                    raise ValueError("Digite um número válido entre 1 e 9")
+                    raise ValueError("Type a number between 1 to 9")
             except ValueError as e:
                 print(e)
 
-    def game_loop(self, game_mode, difficulty):
+
+    def countdown_timer(self, duration):
+        """Countdown timer that stops the game when time runs out."""
+        while duration > 0 and self.timer_active:
+            print(f"Time remaining: {duration} seconds", end="\r")
+            time.sleep(1)
+            duration -= 1
+        if duration == 0:
+            self.timer_active = False
+            print("\nTime's up! Game over.")
+
+    def game_loop(self, game_style, difficulty):
         for j in range(9):
-            if game_mode == "bot":
+            if game_style == "bot":
                 if j % 2 == 0:
                     player = self.game.x
                     move = self.get_play(player)
@@ -96,11 +110,11 @@ class GameController:
                             self.game.display_grid()
                             break        
                     else:
-                        print("Quadrante Inválido")
+                        print("Invalid Quadrant")
                     if j == 8:
-                        print("Deu véia!!!")
+                        print("Draw!!!")
                 else:
-                    print("Vez jogador o...")
+                    print("o's turn...")
                     match difficulty:
                         case "1":
                             self.adversary.easy_bot(self.game.display_grid, self.game.board)
@@ -113,8 +127,8 @@ class GameController:
                         self.game.display_grid()
                         break
                     if j == 8:
-                        print("Deu véia!!!")
-            elif game_mode == "player2":
+                        print("Draw!!!")
+            elif game_style == "player2":
                 player = self.game.x if j % 2 == 0 else self.game.o
                 move = self.get_play(player)
                 quadrant = int(move) - 1
@@ -125,31 +139,117 @@ class GameController:
                         self.game.display_grid()
                         break     
                 else:
-                    print("Quadrante Inválido")
+                    print("Invalid Quadrant")
                 if j == 8:
-                    print("Deu véia!!!")
+                    print("Draw!!!")
             else:
-                raise ValueError("Comando invalido, digite bot ou player2")
+                raise ValueError("Invalid command, type bot or player2")
+            
+
+            
+    def game_timed_loop(self, game_style, difficulty):
+        timer_thread = threading.Thread(target= self.countdown_timer, args=(20,))
+        timer_thread.start()
+        for j in range(9):
+            if game_style == "bot":
+                if j % 2 == 0:
+                    player = self.game.x
+                    move = self.get_play(player)
+                    quadrant = int(move) - 1 
+                    if self.game.board[quadrant] == " ":
+                        self.game.board[quadrant] = player
+                        self.game.display_grid()
+                        if self.game.check_win(player):
+                            self.game.display_grid()
+                            break        
+                    else:
+                        print("Invalid Quadrant")
+                    if j == 8:
+                        print("Draw!!!")
+                else:
+                    print("o's turn...")
+                    match difficulty:
+                        case "1":
+                            self.adversary.easy_bot(self.game.display_grid, self.game.board)
+                        case "2":
+                            self.adversary.medium_bot(self.game.display_grid, self.game.board, j)
+                        case "3":
+                            self.adversary.hard_bot(self.game.display_grid, self.game.board)
+                    player = self.game.o
+                    if self.game.check_win(player):
+                        self.game.display_grid()
+                        break
+                    if j == 8:
+                        print("Draw!!!")
+            elif game_style == "player2":
+                player = self.game.x if j % 2 == 0 else self.game.o
+                move = self.get_play(player)
+                quadrant = int(move) - 1
+                if self.game.board[quadrant] == " ":
+                    self.game.board[quadrant] = player
+                    self.game.display_grid()
+                    if self.game.check_win(player):
+                        self.game.display_grid()
+                        break     
+                else:
+                    print("Invalid Quadrant")
+                if j == 8:
+                    print("Draw!!!")
+            else:
+                raise ValueError("Invalid command, type bot or player2")
+        else:
+            print("Time is over")
+        self.timer_active = False  # Ensure timer stops after the game ends
+        timer_thread.join() 
+            
 
 
 def main():
     controller = GameController()
 
-    game_mode = input("Escolha modo de jogo (bot ou player2): ")
-    while game_mode != "bot" and game_mode != "player2":
-        game_mode = input("Escolha modo de jogo (bot ou player2): ")
+    game_mode = input("""Choose game mode: 
+    1. With countdown timer
+    2. Without countdown timer\n""")
+    while game_mode != "1" and game_mode != "2":
+        game_mode = input("""Choose game mode: 
+    1. With countdown timer
+    2. Without countdown timer\n""")
+        
+    if game_mode == "2":
 
-    if game_mode == "bot":
-        valid_difficulties = ["1", "2", "3", "4"]
-        difficulty = None
-        while difficulty not in valid_difficulties:
-            difficulty =  input("""Escolha a dificuldade:
-        1. Easy
-        2. Medium
-        3. Hard
-        4. Hardcore\n""")
-            
-    controller.game.display_grid()
-    controller.game_loop(game_mode, difficulty)
+        game_style = input("Choose game style (bot or player2): ")
+        while game_style != "bot" and game_style != "player2":
+            game_style = input("Choose game style (bot or player2): ")
+
+        if game_style == "bot":
+            valid_difficulties = ["1", "2", "3", "4"]
+            difficulty = None
+            while difficulty not in valid_difficulties:
+                difficulty =  input("""Choose difficulty:
+            1. Easy
+            2. Medium
+            3. Hard
+            4. Hardcore\n""")
+                
+        controller.game.display_grid()
+        controller.game_loop(game_style, difficulty)
+
+    else:
+        game_style = input("Choose game style (bot or player2): ")
+        while game_style != "bot" and game_style != "player2":
+            game_style = input("Choose game style (bot or player2): ")
+
+        if game_style == "bot":
+            valid_difficulties = ["1", "2", "3", "4"]
+            difficulty = None
+            while difficulty not in valid_difficulties:
+                difficulty =  input("""Choose difficulty:
+            1. Easy
+            2. Medium
+            3. Hard
+            4. Hardcore\n""")
+                
+        controller.game.display_grid()
+        controller.game_timed_loop(game_style, difficulty)
 
 main()
