@@ -1,6 +1,7 @@
 from bot import Bot
 import time
 import threading
+import sys
 
 class TicTacToe:
     def __init__(self):
@@ -87,14 +88,18 @@ class GameController:
 
 
     def countdown_timer(self, duration):
-        """Countdown timer that stops the game when time runs out."""
+        """Countdown timer that updates on a separate line."""
+        sys.stdout.write("\033[s")  # Save the current cursor position
         while duration > 0 and self.timer_active:
-            print(f"Time remaining: {duration} seconds", end="\r")
+            sys.stdout.write("\033[u")  # Restore the saved cursor position
+            sys.stdout.write(f"\033[KTime remaining: {duration} seconds\n")  # Clear line and print timer
+            sys.stdout.flush()
             time.sleep(1)
             duration -= 1
         if duration == 0:
             self.timer_active = False
-            print("\nTime's up! Game over.")
+            sys.stdout.write("\033[u\033[KTime's up! Game over.\n")  # Notify when time is up
+            sys.stdout.flush()
 
     def game_loop(self, game_style, difficulty):
         for j in range(9):
