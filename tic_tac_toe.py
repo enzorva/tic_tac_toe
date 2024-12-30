@@ -67,6 +67,12 @@ class TicTacToe:
             print(f"{player} wins!!!")
             return True
         return False
+    
+    # def check_draw(self, board):
+    #     for quadrant in board:
+    #           if board[quadrant] == " ":
+    #               return False
+    #     return True
 
         
 class GameController:
@@ -116,7 +122,7 @@ class GameController:
                             break        
                     else:
                         print("Invalid Quadrant")
-                    if j == 8:
+                    if j==8:
                         print("Draw!!!")
                 else:
                     print("o's turn...")
@@ -127,11 +133,13 @@ class GameController:
                             self.adversary.medium_bot(self.game.display_grid, self.game.board, j)
                         case "3":
                             self.adversary.hard_bot(self.game.display_grid, self.game.board)
+                        case "4":
+                            self.adversary.hardcore_bot(self.game.board, self.game.check_win,self.game.display_grid)
                     player = self.game.o
                     if self.game.check_win(player):
                         self.game.display_grid()
                         break
-                    if j == 8:
+                    if j==8:
                         print("Draw!!!")
             elif game_style == "player2":
                 player = self.game.x if j % 2 == 0 else self.game.o
@@ -145,14 +153,14 @@ class GameController:
                         break     
                 else:
                     print("Invalid Quadrant")
-                if j == 8:
+                if j==8:
                     print("Draw!!!")
             else:
                 raise ValueError("Invalid command, type bot or player2")
             
 
             
-    def game_timed_loop(self, game_style, difficulty):
+    def game_timed_loop(self, game_style):
         timer_thread = threading.Thread(target= self.countdown_timer, args=(20,))
         timer_thread.start()
         for j in range(9):
@@ -173,13 +181,15 @@ class GameController:
                         print("Draw!!!")
                 else:
                     print("o's turn...")
-                    match difficulty:
+                    match self.game.difficulty:
                         case "1":
                             self.adversary.easy_bot(self.game.display_grid, self.game.board)
                         case "2":
                             self.adversary.medium_bot(self.game.display_grid, self.game.board, j)
                         case "3":
                             self.adversary.hard_bot(self.game.display_grid, self.game.board)
+                        case "4":
+                            self.adversary.hardcore_bot(self.game.board, self.game.check_win)
                     player = self.game.o
                     if self.game.check_win(player):
                         self.game.display_grid()
@@ -255,6 +265,6 @@ def main():
             4. Hardcore\n""")
                 
         controller.game.display_grid()
-        controller.game_timed_loop(game_style, difficulty)
+        controller.game_timed_loop(game_style)
 
 main()

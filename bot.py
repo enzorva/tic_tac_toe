@@ -237,6 +237,56 @@ class Bot:
                     board[edge] = self.o
                     display_grid()
                     return
+                
+
+    def check_win_bot(self, player, check_win_row, check_win_column, check_win_diagonals):
+        if check_win_row(player) or check_win_column(player) or check_win_diagonals(player):
+            return True
+        return False
 
 
+    def hardcore_bot(self, board, check_win_bot, display_grid):
+        best_score = -float('inf')
+        best_move = None
+        
+        for quadrant in range(len(board)):
+            if board[quadrant] == " ":
+                board[quadrant] = self.o  # Try the move
+                score = self.minimax(board, False, check_win_bot)  # Call minimax for opponent
+                board[quadrant] = " "  # Undo the move
+                if score > best_score:
+                    best_score = score
+                    best_move = quadrant
 
+        if best_move is not None:
+            board[best_move] = self.o  # Make the best move
+            display_grid()
+        
+
+    def minimax(self, board, is_maximizing, check_win_bot):
+        # Check for terminal states
+        if check_win_bot(self.o):  # Bot wins
+            return 1
+        elif check_win_bot(self.x):  # Opponent wins
+            return -1
+        elif " " not in board:  # Draw
+            return 0
+
+        if is_maximizing:
+            best_score = -float('inf')
+            for quadrant in range(len(board)):
+                if board[quadrant] == " ":
+                    board[quadrant] = self.o
+                    score = self.minimax(board, False, check_win_bot)
+                    board[quadrant] = " "
+                    best_score = max(score, best_score)
+            return best_score
+        else:
+            best_score = float('inf')
+            for quadrant in range(len(board)):
+                if board[quadrant] == " ":
+                    board[quadrant] = self.x
+                    score = self.minimax(board, True, check_win_bot)
+                    board[quadrant] = " "
+                    best_score = min(score, best_score)
+            return best_score
